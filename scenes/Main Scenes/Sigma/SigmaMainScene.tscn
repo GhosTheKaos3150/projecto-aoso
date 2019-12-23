@@ -1,0 +1,57 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://scenes/Main Scenes/Sigma/SigmaMainScene.gd" type="Script" id=1]
+[ext_resource path="res://scenes/Main Scenes/Sigma/ShipSpawn.gd" type="Script" id=2]
+[ext_resource path="res://assets/Background/BG Sigma Zones.png" type="Texture" id=3]
+[ext_resource path="res://scenes/Player/Player.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/GUI/PlayerHud.tscn" type="PackedScene" id=5]
+[ext_resource path="res://scenes/Main Scenes/Title Screen/TitleScreen.tscn" type="PackedScene" id=6]
+
+[sub_resource type="Curve2D" id=1]
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, -1.71348, 0, 0, 0, 0, 0, -1.71348, 0, 0, 0, 0, 0, 430.918, 0 )
+}
+
+[node name="SigmaMain" type="Node"]
+script = ExtResource( 1 )
+
+[node name="ShipSpawn" type="Path2D" parent="."]
+editor/display_folded = true
+position = Vector2( 53.6768, 0 )
+scale = Vector2( 1.00566, 1e-005 )
+curve = SubResource( 1 )
+script = ExtResource( 2 )
+
+[node name="ShipSpawnLocation" type="PathFollow2D" parent="ShipSpawn"]
+position = Vector2( -1.71348, 0 )
+
+[node name="Background" type="Sprite" parent="."]
+position = Vector2( 270, 480 )
+texture = ExtResource( 3 )
+
+[node name="PlayerInitPosition" type="Position2D" parent="."]
+position = Vector2( 280, 770 )
+
+[node name="Player" parent="." instance=ExtResource( 4 )]
+visible = false
+position = Vector2( 280, 770 )
+
+[node name="PlayerHUD" parent="." instance=ExtResource( 5 )]
+
+[node name="SpawnTimer" type="Timer" parent="."]
+wait_time = 4.0
+
+[node name="TitleScreen" parent="." instance=ExtResource( 6 )]
+[connection signal="create_enemy" from="." to="ShipSpawn" method="_on_SigmaMain_create_enemy"]
+[connection signal="new_game" from="." to="ShipSpawn" method="_on_SigmaMain_new_game"]
+[connection signal="new_game" from="." to="Player" method="_on_SigmaMain_new_game"]
+[connection signal="new_game" from="." to="PlayerHUD" method="_on_SigmaMain_new_game"]
+[connection signal="new_game" from="." to="." method="_on_SigmaMain_new_game"]
+[connection signal="score_changed" from="." to="PlayerHUD" method="_on_SigmaMain_score_changed"]
+[connection signal="game_over" from="Player" to="ShipSpawn" method="_on_Player_game_over"]
+[connection signal="game_over" from="Player" to="PlayerHUD" method="_on_Player_game_over"]
+[connection signal="game_over" from="Player" to="." method="_on_Player_game_over"]
+[connection signal="life_changed" from="Player" to="PlayerHUD" method="_on_Player_life_changed"]
+[connection signal="shoot_now" from="PlayerHUD" to="Player" method="_on_PlayerHUD_shoot_now"]
+[connection signal="timeout" from="SpawnTimer" to="." method="_on_SpawnTimer_timeout"]
+[connection signal="new_game" from="TitleScreen" to="." method="_on_TitleScreen_new_game"]
